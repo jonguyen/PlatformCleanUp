@@ -28,6 +28,8 @@ public class TestDomNode {
 	public static String tempBeginTag = "<tempRoot name=\"id\">";
 	public static String tempEndTag = "</tempRoot>";
 	private static final String DEFAULT_ENCODING_REL = "UTF-8";
+	private static final String PLATFORM = "winphone";
+	
 
 	public static void main(String[] args) {
 		try {
@@ -51,8 +53,8 @@ public class TestDomNode {
 				String outputFileName = "";
 				
 
-				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-iOS\\Localizable.asfx";
-				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-iOS\\update.asfx";
+				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
+				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
 				FileInputStream stream = new FileInputStream(inputFileName);
 				Document doc = builder.parse(stream, DEFAULT_ENCODING_REL);
 				
@@ -67,13 +69,12 @@ public class TestDomNode {
 					String translateVal = "";
 					
 					boolean needsUpdate = false;
-					String iosVal = "";
 					NodeList valList = ((Element)cur).getElementsByTagName("val");
 					Node saveVal = null;
 					for (int k=0; k < valList.getLength(); k++) {
 						Node curVal = valList.item(k);
 						if (((Element)curVal).hasAttribute("plat") && 
-								((Element)curVal).getAttribute("plat").equalsIgnoreCase("ios") &&
+								((Element)curVal).getAttribute("plat").equalsIgnoreCase(PLATFORM) &&
 								(curVal.getNodeValue() != "")){
 							if (curVal.getFirstChild() != null) {
 								needsUpdate = true;
