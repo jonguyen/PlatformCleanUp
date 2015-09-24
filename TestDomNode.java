@@ -43,62 +43,71 @@ public class TestDomNode {
 			Node root = strDoc.getDocumentElement();
 			String result = nodeToString(root);
 			System.out.println(result);*/
-			
-			boolean change = false;
-//			Document doc = null;
-			String inputFileName = "";
-			String outputFileName = "";
-			
-//			try {
-				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\ja_jp\\asf\\Reader-iOS\\Localizable.asfx";
-				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\ja_jp\\asf\\Reader-iOS\\john.asfx";
+
+			String[] locales = {"ja_jp", "de_de", "fr_fr", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "fi_fi", "da_dk", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr", "en_us"};
+			for (String locale : locales) {
+				boolean change = false;
+				String inputFileName = "";
+				String outputFileName = "";
+				
+
+				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-iOS\\Localizable.asfx";
+				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-iOS\\update.asfx";
 				FileInputStream stream = new FileInputStream(inputFileName);
 				Document doc = builder.parse(stream, DEFAULT_ENCODING_REL);
-//			} catch (Exception e) {
-//				System.out.println("failed here");
-//			}
-			
-			NodeList strList = doc.getElementsByTagName("str");
-			for (int i=0; i < strList.getLength(); i++) {
-				Node cur = strList.item(i);
-				boolean needsUpdate = false;
-				String iosVal = "";
-				NodeList valList = ((Element)cur).getElementsByTagName("val");
-				Node saveVal = null;
-				for (int k=0; k < valList.getLength(); k++) {
-					Node curVal = valList.item(k);
-					if (((Element)curVal).hasAttribute("plat") && 
-							((Element)curVal).getAttribute("plat").equalsIgnoreCase("ios") &&
-							(curVal.getNodeValue() != "")){
-
-						needsUpdate = true;
-						saveVal = curVal;
-						break;
-					}
+				
+				NodeList strList = doc.getElementsByTagName("str");
+				Node parent = null;
+			    if (strList.getLength() > 0) {
+			    	parent = strList.item(0).getParentNode();
+			    }
+				for (int i=0; i < strList.getLength(); i++) {
+					Node cur = strList.item(i);
+					String nameVal = ((Element)cur).getAttribute("name");
+					String translateVal = "";
 					
-					
-				}
-				if (needsUpdate && (saveVal != null)) {
-					for (int j=0; j < valList.getLength(); j++) {
-						Node valNode = valList.item(j);
-						
-						if (!valNode.equals(saveVal)) {
-							cur.removeChild(valNode);
+					boolean needsUpdate = false;
+					String iosVal = "";
+					NodeList valList = ((Element)cur).getElementsByTagName("val");
+					Node saveVal = null;
+					for (int k=0; k < valList.getLength(); k++) {
+						Node curVal = valList.item(k);
+						if (((Element)curVal).hasAttribute("plat") && 
+								((Element)curVal).getAttribute("plat").equalsIgnoreCase("ios") &&
+								(curVal.getNodeValue() != "")){
+							if (curVal.getFirstChild() != null) {
+								needsUpdate = true;
+								saveVal = curVal;
+								break;
+							}						
 						}
+						
 					}
-					((Element)saveVal).removeAttribute("plat");
-					change = true;
+					if (needsUpdate && (saveVal != null)) {
+						Element newNode = doc.createElement("str");
+						newNode.setAttribute("name", nameVal);
+						if (((Element)cur).hasAttribute("translate")) {
+							newNode.setAttribute("translate", ((Element)cur).getAttribute("translate"));
+						}
+						((Element)saveVal).removeAttribute("plat");
+						newNode.appendChild(saveVal);
+						
+						parent.replaceChild(newNode, cur);
+						change = true;
+					}
 				}
-			}
-			
-			if (change) {
-			    // Write output to xml file
-			    TransformerFactory tFactory = TransformerFactory.newInstance();
-			    Transformer transformer = tFactory.newTransformer();
-			    doc.setXmlStandalone(true);
-			    DOMSource source = new DOMSource(doc);
-			    StreamResult result = new StreamResult(new FileOutputStream(outputFileName));
-			    transformer.transform(source, result);
+				
+				if (change) {
+				    // Write output to xml file
+				    TransformerFactory tFactory = TransformerFactory.newInstance();
+				    Transformer transformer = tFactory.newTransformer();
+				    doc.setXmlStandalone(true);
+				    DOMSource source = new DOMSource(doc);
+				    StreamResult result = new StreamResult(new FileOutputStream(outputFileName));
+				    transformer.transform(source, result);
+				}
+
+				
 			}
 			
 
