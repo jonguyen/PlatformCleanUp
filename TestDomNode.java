@@ -46,20 +46,32 @@ public class TestDomNode {
 			String result = nodeToString(root);
 			System.out.println(result);*/
 
-			String[] locales = {"ja_jp", "de_de", "fr_fr", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "fi_fi", "da_dk", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr", "en_us"};
+			String[] locales = {"en_us"};
+			
+			//String[] locales = {"en_us", "de_de", "fr_fr", "ja_jp", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "da_dk", "fi_fi", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr"};
+			
 			for (String locale : locales) {
 				boolean change = false;
 				String inputFileName = "";
 				String outputFileName = "";
 				
+				// Reader-Android
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
+				
+				// Reader-Winphone legacy
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				
+				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				
 
-				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
-				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
 				FileInputStream stream = new FileInputStream(inputFileName);
 				Document doc = builder.parse(stream, DEFAULT_ENCODING_REL);
 				
 				NodeList strList = doc.getElementsByTagName("str");
-				Node parent = null;
+				Node parent = null; 
 			    if (strList.getLength() > 0) {
 			    	parent = strList.item(0).getParentNode();
 			    }
@@ -76,7 +88,7 @@ public class TestDomNode {
 						if (((Element)curVal).hasAttribute("plat") && 
 								((Element)curVal).getAttribute("plat").equalsIgnoreCase(PLATFORM) &&
 								(curVal.getNodeValue() != "")){
-							if (curVal.getFirstChild() != null) {
+							if (curVal.getFirstChild() != null && !curVal.getFirstChild().getNodeValue().equalsIgnoreCase("null")) {
 								needsUpdate = true;
 								saveVal = curVal;
 								break;
@@ -91,9 +103,32 @@ public class TestDomNode {
 							newNode.setAttribute("translate", ((Element)cur).getAttribute("translate"));
 						}
 						((Element)saveVal).removeAttribute("plat");
+						
+						NodeList descList = ((Element)cur).getElementsByTagName("desc");
+						Node desc = null;
+						if (descList.getLength() > 0) {
+							desc = descList.item(0);
+							newNode.appendChild(desc);
+						}						
 						newNode.appendChild(saveVal);
 						
+
+						
 						parent.replaceChild(newNode, cur);
+						change = true;
+					} else if (locale.equalsIgnoreCase("en_us")) {
+						boolean needsClean = false;
+						valList = ((Element)cur).getElementsByTagName("val");
+						for (int j=0; j < valList.getLength(); j++) {
+							Node curVal = valList.item(j);
+							if (((Element)curVal).hasAttribute("plat")) {
+								needsClean = true;
+								break;
+							}							
+						}
+						if (needsClean) {
+							parent.removeChild(cur);
+						}
 						change = true;
 					}
 				}
