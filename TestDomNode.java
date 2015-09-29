@@ -60,11 +60,14 @@ public class TestDomNode {
 				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
 				
 				// Reader-Winphone legacy
-				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
-				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
 				
-				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
-				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				
+				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";				
 				
 
 				FileInputStream stream = new FileInputStream(inputFileName);
@@ -81,18 +84,23 @@ public class TestDomNode {
 					String translateVal = "";
 					
 					boolean needsUpdate = false;
+					boolean needsClean = false;
 					NodeList valList = ((Element)cur).getElementsByTagName("val");
 					Node saveVal = null;
 					for (int k=0; k < valList.getLength(); k++) {
 						Node curVal = valList.item(k);
-						if (((Element)curVal).hasAttribute("plat") && 
-								((Element)curVal).getAttribute("plat").equalsIgnoreCase(PLATFORM) &&
-								(curVal.getNodeValue() != "")){
-							if (curVal.getFirstChild() != null && !curVal.getFirstChild().getNodeValue().equalsIgnoreCase("null")) {
-								needsUpdate = true;
-								saveVal = curVal;
-								break;
-							}						
+						if (((Element)curVal).hasAttribute("plat")) {
+							 if (((Element)curVal).getAttribute("plat").equalsIgnoreCase(PLATFORM)) {
+									if (curVal.getFirstChild() != null && !curVal.getFirstChild().getNodeValue().equalsIgnoreCase("null")) {
+										needsUpdate = true;
+										saveVal = curVal;
+										break;
+									}	
+							 } else {
+								 
+							 }
+						} else if (curVal.getFirstChild() == null) {
+							needsClean = true;
 						}
 						
 					}
@@ -115,9 +123,9 @@ public class TestDomNode {
 
 						
 						parent.replaceChild(newNode, cur);
+						needsUpdate = false;
 						change = true;
-					} else if (locale.equalsIgnoreCase("en_us")) {
-						boolean needsClean = false;
+					} else if (needsClean) {
 						valList = ((Element)cur).getElementsByTagName("val");
 						for (int j=0; j < valList.getLength(); j++) {
 							Node curVal = valList.item(j);
@@ -129,6 +137,7 @@ public class TestDomNode {
 						if (needsClean) {
 							parent.removeChild(cur);
 						}
+						needsClean = false;
 						change = true;
 					}
 				}
