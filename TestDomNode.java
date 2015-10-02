@@ -1,6 +1,8 @@
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -14,11 +16,16 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.CDATASection;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 
 public class TestDomNode {
@@ -36,19 +43,22 @@ public class TestDomNode {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();;
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			
-			// Test 1
-			/*String strValue = "Start<![CDATA[<font color=\'#005CFF\'>%1$s</font> appreciated your work]]>End";
-	        //String strValue = "testhere\\n\\n<head><title>Hello world!</title></head><body><table><tr>row1</tr><tr>row1</tr></table>Some <b>text</b> here too</body>endhere too";
-	        //strValue = "<a href=\"http://test.com\"> high light </a>";
-			String temp = tempBeginTag + strValue + tempEndTag;
-			Document strDoc = builder.parse(new ByteArrayInputStream(temp.getBytes(StandardCharsets.UTF_8)));
-			Node root = strDoc.getDocumentElement();
-			String result = nodeToString(root);
-			System.out.println(result);*/
+			// Ignore DTD file
+			builder.setEntityResolver(new EntityResolver() {
+		        @Override
+		        public InputSource resolveEntity(String publicId, String systemId)
+		                throws SAXException, IOException {
+		            if (systemId.contains("asf_1_0.dtd")) {
+		                return new InputSource(new StringReader(""));
+		            } else {
+		                return null;
+		            }
+		        }
+		    });
 
-			String[] locales = {"en_us"};
+			//String[] locales = {"en_us"};
 			
-			//String[] locales = {"en_us", "de_de", "fr_fr", "ja_jp", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "da_dk", "fi_fi", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr"};
+			String[] locales = {"en_us", "de_de", "fr_fr", "ja_jp", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "da_dk", "fi_fi", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr"};
 			
 			for (String locale : locales) {
 				boolean change = false;
@@ -59,26 +69,47 @@ public class TestDomNode {
 				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
 				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\strings.asfx";
 				
-				// Reader-Winphone legacy
-				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
-				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+								
+				
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\Signature\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-Android\\Signature\\strings.asfx";
+				
+				
+				// Reader-Winphone
+				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
+				outputFileName = inputFileName; 
 				
 				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
 				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-WinPhone\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Reader-WinPhone\\strings.asfx";
 				
-				inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
-				outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";				
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
 				
+				//Reader-iOS
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\build\\" + locale + "\\asf\\Share-PDFViewer\\strings.asfx";				
+
+				//Reader-Android Ship
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Ship\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\Localizable.asfx";
+				//outputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-Android\\Ship\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-Android\\Localizable.asfx";				
+
+				// Reader-ios
+				//inputFileName = "C:\\Projects\\centralized_alf\\products\\DCMobile\\Reader-iOS\\Main\\alfa\\resources\\edit\\" + locale + "\\asf\\Reader-iOS\\Localizable.asfx";
+				//outputFileName = inputFileName; 				
 
 				FileInputStream stream = new FileInputStream(inputFileName);
 				Document doc = builder.parse(stream, DEFAULT_ENCODING_REL);
 				
 				NodeList strList = doc.getElementsByTagName("str");
-				Node parent = null; 
-			    if (strList.getLength() > 0) {
-			    	parent = strList.item(0).getParentNode();
-			    }
+				// Move inside the loop in case there is a set parent node
+				//Node parent = null; 
+			    //if (strList.getLength() > 0) {
+			    //	parent = strList.item(0).getParentNode();
+			    //}
 				for (int i=0; i < strList.getLength(); i++) {
+					Node parent = strList.item(i).getParentNode();
 					Node cur = strList.item(i);
 					String nameVal = ((Element)cur).getAttribute("name");
 					String translateVal = "";
@@ -145,7 +176,17 @@ public class TestDomNode {
 				if (change) {
 				    // Write output to xml file
 				    TransformerFactory tFactory = TransformerFactory.newInstance();
-				    Transformer transformer = tFactory.newTransformer();
+				    tFactory.setAttribute("indent-number", 4);
+				    Transformer transformer = tFactory.newTransformer();		    
+				    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				    
+				    // Add DTD back
+				    DOMImplementation domImpl = doc.getImplementation();
+				    DocumentType doctype = domImpl.createDocumentType("doctype",
+				        "",
+				        "http://ns.adobe.com/asf/asf_1_0.dtd");
+				    transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+				    
 				    doc.setXmlStandalone(true);
 				    DOMSource source = new DOMSource(doc);
 				    StreamResult result = new StreamResult(new FileOutputStream(outputFileName));
