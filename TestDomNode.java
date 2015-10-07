@@ -56,9 +56,9 @@ public class TestDomNode {
 		        }
 		    });
 
-			//String[] locales = {"en_us"};
+			String[] locales = {"en_us"};
 			
-			String[] locales = {"en_us", "de_de", "fr_fr", "ja_jp", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "da_dk", "fi_fi", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr"};
+			//String[] locales = {"en_us", "de_de", "fr_fr", "ja_jp", "es_es", "it_it", "pt_br", "nl_nl", "sv_se", "da_dk", "fi_fi", "nb_no", "ko_kr", "zh_cn", "zh_tw", "cs_cz", "pl_pl", "ru_ru", "tr_tr"};
 			
 			for (String locale : locales) {
 				boolean change = false;
